@@ -1,6 +1,6 @@
 Name:           maven-invoker
 Version:        2.1.1
-Release:        7%{?dist}
+Release:        9%{?dist}
 Summary:        Fires a maven build in a clean environment
 License:        ASL 2.0
 URL:            http://maven.apache.org/shared/maven-invoker/
@@ -16,11 +16,6 @@ BuildRequires:  junit
 BuildRequires:  maven-local
 BuildRequires:  maven-surefire-provider-junit
 BuildRequires:  maven-shared
-Requires:       java
-Requires:       jpackage-utils
-Requires:       maven-shared
-Requires:       plexus-containers-component-annotations
-Requires:       plexus-utils
 
 Obsoletes:      maven-shared-invoker < %{version}-%{release}
 Provides:       maven-shared-invoker = %{version}-%{release}
@@ -39,8 +34,7 @@ This is a replacement package for maven-shared-invoker
 %package javadoc
 Group:          Documentation
 Summary:        Javadoc for %{name}
-Requires:       jpackage-utils
-    
+
 %description javadoc
 API documentation for %{name}.
 
@@ -50,36 +44,28 @@ API documentation for %{name}.
 %patch0 -p1
 %patch1 -p1
 
+%mvn_file : %{name}
+
 %build
-mvn-rpmbuild package javadoc:aggregate -Dmaven.test.failure.ignore
+%mvn_build -f
 
 %install
-# JAR
-install -Ddm 755 %{buildroot}/%{_javadir}
-install -Dpm 644 target/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
+%mvn_install
 
-# POM
-install -Ddm 755 %{buildroot}/%{_mavenpomdir}
-install -Dpm 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-
-# JavaDoc
-install -Ddm 755 %{buildroot}/%{_javadocdir}/%{name}
-cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
-
-%add_maven_depmap JPP-%{name}.pom %{name}.jar
-
-%files
+%files -f .mfiles
 %doc LICENSE NOTICE
-%{_javadir}/%{name}.jar
-%{_mavenpomdir}/JPP-%{name}.pom
-%{_mavendepmapfragdir}/%{name}
 
-%files javadoc
+%files javadoc -f .mfiles-javadoc
 %doc LICENSE NOTICE
-%doc %{_javadocdir}/%{name}
 
 
 %changelog
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2.1.1-9
+- Mass rebuild 2013-12-27
+
+* Mon Aug 26 2013 Michal Srb <msrb@redhat.com> - 2.1.1-8
+- Migrate away from mvn-rpmbuild (Resolves: #997507)
+
 * Fri Jun 28 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 2.1.1-7
 - Rebuild to regenerate API documentation
 - Resolves: CVE-2013-1571
