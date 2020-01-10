@@ -1,0 +1,26 @@
+From fb1bfb61d31abcdfaac0256648f42257520ce3c9 Mon Sep 17 00:00:00 2001
+From: Mikolaj Izdebski <mizdebsk@redhat.com>
+Date: Wed, 13 Mar 2013 13:35:39 +0100
+Subject: [PATCH 1/2] Fix MSHARED-278
+
+See: http://jira.codehaus.org/browse/MSHARED-278
+---
+ .../java/org/apache/maven/shared/invoker/MavenCommandLineBuilder.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/org/apache/maven/shared/invoker/MavenCommandLineBuilder.java b/src/main/java/org/apache/maven/shared/invoker/MavenCommandLineBuilder.java
+index f8a22a5..35ab16b 100644
+--- a/src/main/java/org/apache/maven/shared/invoker/MavenCommandLineBuilder.java
++++ b/src/main/java/org/apache/maven/shared/invoker/MavenCommandLineBuilder.java
+@@ -542,7 +542,7 @@ public class MavenCommandLineBuilder
+                 if ( !mavenHome.isDirectory() )
+                 {
+                     File binDir = mavenHome.getParentFile();
+-                    if ( "bin".equals( binDir.getName() ) )
++                    if ( binDir != null && "bin".equals( binDir.getName() ) )
+                     {
+                         // ah, they specified the mvn
+                         // executable instead...
+-- 
+1.8.1.4
+
